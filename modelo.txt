@@ -1,0 +1,35 @@
+HashMap<String, String> -> Json para criar o Objeto
+
+Possibilidades:
+
+    {}
+
+    {
+        nome: tipo
+    }
+
+    {
+        nome: [
+            nome: tipo
+        ]
+    }
+
+    [
+        nome: tipo
+    ]
+
+    {
+        nome: tipo,
+        nome1: tipo1
+        ...
+        nomeN: tipoN
+    }
+
+
+regras: 
+    nome: qualquer string não vazia e não nula
+    objetos: podendo ter uma ou mais instancias
+    objetos: limitar quantidade de instancias (definir)
+    arrays: sempre homogenios
+    arrays: tamanho limitado (definir)
+
