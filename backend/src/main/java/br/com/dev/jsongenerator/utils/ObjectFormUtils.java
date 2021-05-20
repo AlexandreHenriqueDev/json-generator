@@ -5,10 +5,7 @@ import br.com.dev.jsongenerator.enums.FormatterEnum;
 import br.com.dev.jsongenerator.enums.TypeEnum;
 import org.apache.commons.lang3.RandomStringUtils;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static br.com.dev.jsongenerator.constants.ObjectsFormConstant.MARKS;
 import static br.com.dev.jsongenerator.constants.ObjectsFormConstant.TWO_DOTS;
@@ -29,14 +26,16 @@ public class ObjectFormUtils {
             TypeEnum type = TypeEnum.valueOf((String) map.get("type"));
             Integer size = (Integer) map.get("size");
             String form = (String) map.get("formatter");
+            Boolean isNull = (Boolean) map.get("isNull");
             FormatterEnum formatter = nonNull(form) ? FormatterEnum.valueOf(form) : null;
             list.add(ObjectReaderDto
                     .builder()
-                    .property(nonNull(property) ? property : null)
-                    .value(nonNull(value) ? value : null)
-                    .type(nonNull(type) ? type : null)
-                    .size(nonNull(size) ? size : null)
-                    .formatter(nonNull(formatter) ? formatter : null)
+                    .property(property)
+                    .value(value)
+                    .type(type)
+                    .size(size)
+                    .isNull(isNull)
+                    .formatter(formatter)
                     .build());
         }
         return list;
@@ -74,12 +73,17 @@ public class ObjectFormUtils {
         return sb.toString();
     }
 
-    public static String readObject(String property, Long value) {
+    public static String readObject(String property, Long value, FormatterEnum formatter) {
         sb = new StringBuilder();
         if(nonNull(property)) {
             sb.append(MARKS).append(property).append(MARKS).append(TWO_DOTS);
         }
-        sb.append(isNull(value) ? generateRandomLong() : value);
+
+        Long genatedValue = nonNull(formatter)
+                ? Long.valueOf(getRandom(formatter)).longValue()
+                : generateRandomLong();
+
+        sb.append(isNull(value) ? genatedValue : value);
         return sb.toString();
     }
 
@@ -90,6 +94,15 @@ public class ObjectFormUtils {
         }
         sb.append(isNull(value) ? generateRandomBoolean() : value);
         return sb.toString();
+    }
+
+    public static String readObject(String property, Date value) {
+        sb = new StringBuilder();
+        if(nonNull(property)) {
+            sb.append(MARKS).append(property).append(MARKS).append(TWO_DOTS);
+        }
+        sb.append(MARKS).append(isNull(value) ? new Date() : value);
+        return sb.append(MARKS).toString();
     }
 
     private static Boolean generateRandomBoolean() {

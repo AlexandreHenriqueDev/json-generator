@@ -8,7 +8,8 @@ public enum TypeEnum {
     LONG("LONG"),
     BOOLEAN("BOOLEAN"),
     ARRAY("ARRAY"),
-    OBJECT("OBJECT");
+    OBJECT("OBJECT"),
+    DATE("DATE");
 
     private String description;
 
