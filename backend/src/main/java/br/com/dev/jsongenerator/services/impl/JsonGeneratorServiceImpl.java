@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -23,13 +24,13 @@ public class JsonGeneratorServiceImpl implements JsonGeneratorService {
     private StringBuilder sb;
 
     @Override
-    public ResponseEntity processGenericObject(List<ObjectReaderDto> listObjectReader) {
+    public ResponseEntity processGenericObject(List<ObjectReaderDto> listObjectReader) throws ParseException {
         sb = new StringBuilder();
 
         return ResponseEntity.ok().body(readProperties(listObjectReader, false));
     }
 
-    protected String readProperties(List<ObjectReaderDto> listObjectReader, Boolean isArray) {
+    protected String readProperties(List<ObjectReaderDto> listObjectReader, Boolean isArray) throws ParseException {
         if(!isArray) {
             sb.append(OPEN_BRACES);
         }
@@ -57,7 +58,7 @@ public class JsonGeneratorServiceImpl implements JsonGeneratorService {
                         sb.append(readObject(objectReader.getProperty(), (Boolean) objectReader.getValue()));
                         break;
                     case DATE:
-                        sb.append(readObject(objectReader.getProperty(), (Date) objectReader.getValue()));
+                        sb.append(readObject(objectReader.getProperty(), (Date) objectReader.getValue(), objectReader.getFormatter()));
                         break;
                     case OBJECT:
                         if(!isArray) {
@@ -84,7 +85,7 @@ public class JsonGeneratorServiceImpl implements JsonGeneratorService {
         return sb.toString();
     }
 
-    private void mountObjectArray(Object object, TypeEnum type, Integer size) {
+    private void mountObjectArray(Object object, TypeEnum type, Integer size) throws ParseException {
         sb.append(OPEN_BRACKETS);
         for(var i = 0; i< size; i++) {
             readProperties(toListDto((Arrays.asList(object))), true);

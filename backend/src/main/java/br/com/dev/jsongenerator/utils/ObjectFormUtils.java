@@ -3,19 +3,42 @@ package br.com.dev.jsongenerator.utils;
 import br.com.dev.jsongenerator.dto.ObjectReaderDto;
 import br.com.dev.jsongenerator.enums.FormatterEnum;
 import br.com.dev.jsongenerator.enums.TypeEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.text.ParseException;
 import java.util.*;
 
 import static br.com.dev.jsongenerator.constants.ObjectsFormConstant.MARKS;
 import static br.com.dev.jsongenerator.constants.ObjectsFormConstant.TWO_DOTS;
-import static br.com.dev.jsongenerator.utils.CpfCnpjUtils.getRandom;
+import static br.com.dev.jsongenerator.enums.FormatterEnum.RANDOM_DATE;
+import static br.com.dev.jsongenerator.utils.CpfCnpjUtils.*;
+import static br.com.dev.jsongenerator.utils.DateUtils.*;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+@Slf4j
 public class ObjectFormUtils {
 
     private static StringBuilder sb;
+
+    public static String getRandom(FormatterEnum formatter) {
+        switch (formatter) {
+            case CPF:
+                return cpf(false);
+            case CNPJ:
+                return cnpj(false);
+            case FUTURE_DATE:
+                return futureDate().toString();
+            case PAST_DATE:
+                return pastDate().toString();
+            case RANDOM_DATE:
+                return randomDate().toString();
+            default:
+                log.error("Tipo inválido!");
+                throw new EnumConstantNotPresentException(FormatterEnum.class, "Tipo inválido!");
+        }
+    }
 
     public static List<ObjectReaderDto> toListDto(List<Object> listObject) {
         List<ObjectReaderDto> list = new ArrayList<>();
@@ -96,12 +119,17 @@ public class ObjectFormUtils {
         return sb.toString();
     }
 
-    public static String readObject(String property, Date value) {
+    public static String readObject(String property, Date value, FormatterEnum formatter) {
         sb = new StringBuilder();
         if(nonNull(property)) {
             sb.append(MARKS).append(property).append(MARKS).append(TWO_DOTS);
         }
-        sb.append(MARKS).append(isNull(value) ? new Date() : value);
+
+        String genatedValue = nonNull(formatter)
+                ? getRandom(formatter)
+                : getRandom(RANDOM_DATE);
+
+        sb.append(MARKS).append(isNull(value) ? genatedValue : value);
         return sb.append(MARKS).toString();
     }
 
@@ -118,8 +146,7 @@ public class ObjectFormUtils {
     }
 
     private static Integer generateRandomInteger(Integer max) {
-        Random random = new Random();
-        return random.nextInt(max);
+        return new Random().nextInt(max);
     }
 
     private static String generateRandomString(Integer length) {
