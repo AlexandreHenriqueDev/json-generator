@@ -19,6 +19,10 @@ public class ObjectReaderDto implements Serializable {
 
     /** Caso o objeto seja um array */
     private Integer size;
+
+
     private FormatterEnum formatter;
+
+    private Boolean isNull;
 
 }

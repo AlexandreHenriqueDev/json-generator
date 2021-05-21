@@ -7,12 +7,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static br.com.dev.jsongenerator.constants.ObjectsFormConstant.*;
 import static br.com.dev.jsongenerator.utils.ObjectFormUtils.readObject;
 import static br.com.dev.jsongenerator.utils.ObjectFormUtils.toListDto;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Service
@@ -21,49 +24,57 @@ public class JsonGeneratorServiceImpl implements JsonGeneratorService {
     private StringBuilder sb;
 
     @Override
-    public ResponseEntity processGenericObject(List<ObjectReaderDto> listObjectReader) {
+    public ResponseEntity processGenericObject(List<ObjectReaderDto> listObjectReader) throws ParseException {
         sb = new StringBuilder();
 
         return ResponseEntity.ok().body(readProperties(listObjectReader, false));
     }
 
-    protected String readProperties(List<ObjectReaderDto> listObjectReader, Boolean isArray) {
+    protected String readProperties(List<ObjectReaderDto> listObjectReader, Boolean isArray) throws ParseException {
         if(!isArray) {
             sb.append(OPEN_BRACES);
         }
         Integer size = listObjectReader.size();
         for (var i = 0; i < size; i++) {
             ObjectReaderDto objectReader = listObjectReader.get(i);
-            TypeEnum typeObject = objectReader.getType();
-            switch (typeObject) {
-                case STRING:
-                    sb.append(readObject(objectReader.getProperty(), (String) objectReader.getValue(), objectReader.getSize(), objectReader.getFormatter()));
-                    break;
-                case INTEGER:
-                    sb.append(readObject(objectReader.getProperty(), (Integer) objectReader.getValue(), objectReader.getSize()));
-                    break;
-                case DOUBLE:
-                    sb.append(readObject(objectReader.getProperty(), (Double) objectReader.getValue()));
-                    break;
-                case LONG:
-                    sb.append(readObject(objectReader.getProperty(), (Long) objectReader.getValue()));
-                    break;
-                case BOOLEAN:
-                    sb.append(readObject(objectReader.getProperty(), (Boolean) objectReader.getValue()));
-                    break;
-                case OBJECT:
-                    if(!isArray) {
+            if(nonNull(objectReader.getIsNull()) && objectReader.getIsNull()) {
+                sb.append(MARKS).append(objectReader.getProperty()).append(MARKS).append(TWO_DOTS).append("null");
+            } else {
+                TypeEnum typeObject = objectReader.getType();
+                switch (typeObject) {
+                    case STRING:
+                        sb.append(readObject(objectReader.getProperty(), (String) objectReader.getValue(), objectReader.getSize(), objectReader.getFormatter()));
+                        break;
+                    case INTEGER:
+                        sb.append(readObject(objectReader.getProperty(), (Integer) objectReader.getValue(), objectReader.getSize()));
+                        break;
+                    case DOUBLE:
+                        sb.append(readObject(objectReader.getProperty(), (Double) objectReader.getValue()));
+                        break;
+                    case LONG:
+                        sb.append(readObject(objectReader.getProperty(), (Long) objectReader.getValue(), objectReader.getFormatter()));
+                        break;
+                    case BOOLEAN:
+                        sb.append(readObject(objectReader.getProperty(), (Boolean) objectReader.getValue()));
+                        break;
+                    case DATE:
+                        sb.append(readObject(objectReader.getProperty(), (Date) objectReader.getValue(), objectReader.getFormatter()));
+                        break;
+                    case OBJECT:
+                        if(!isArray) {
+                            sb.append(MARKS).append(objectReader.getProperty()).append(MARKS).append(TWO_DOTS);
+                        }
+                        readProperties(toListDto((List<Object>) objectReader.getValue()), false);
+                        break;
+                    case ARRAY:
                         sb.append(MARKS).append(objectReader.getProperty()).append(MARKS).append(TWO_DOTS);
-                    }
-                    readProperties(toListDto((List<Object>) objectReader.getValue()), false);
-                    break;
-                case ARRAY:
-                    sb.append(MARKS).append(objectReader.getProperty()).append(MARKS).append(TWO_DOTS);
-                    mountObjectArray(objectReader.getValue(), typeObject, objectReader.getSize());
-                    break;
-                default:
-                    log.error("Tipo inválido!");
-                    throw new EnumConstantNotPresentException(TypeEnum.class, "Tipo inválido");
+                        mountObjectArray(objectReader.getValue(), typeObject, objectReader.getSize());
+                        break;
+
+                    default:
+                        log.error("Tipo inválido!");
+                        throw new EnumConstantNotPresentException(TypeEnum.class, "Tipo inválido");
+                }
             }
             if(!isArray) {
                 sb.append(size.equals(i + 1) ? BREAK_LINE : COMMA + BREAK_LINE);
@@ -74,7 +85,7 @@ public class JsonGeneratorServiceImpl implements JsonGeneratorService {
         return sb.toString();
     }
 
-    private void mountObjectArray(Object object, TypeEnum type, Integer size) {
+    private void mountObjectArray(Object object, TypeEnum type, Integer size) throws ParseException {
         sb.append(OPEN_BRACKETS);
         for(var i = 0; i< size; i++) {
             readProperties(toListDto((Arrays.asList(object))), true);
