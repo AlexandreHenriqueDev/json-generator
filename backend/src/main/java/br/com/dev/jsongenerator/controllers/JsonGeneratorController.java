@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
 import java.util.List;
 
 @Api(value = "JsonGenerator endpoint", tags = {"JsonGenerator endpoint"})
@@ -22,9 +23,12 @@ public class JsonGeneratorController {
     @Autowired
     private JsonGeneratorService service;
 
-    @ApiOperation(value = "Description method does")
     @PostMapping(value = "/getObject")
-    public ResponseEntity<ResponseBody> getObject(@RequestBody List<ObjectReaderDto> listObjectReader) {
+    @ApiOperation(httpMethod = "POST",
+            value = "Retorna um novo Json com valores randomicos ou estáticos de acordo com o objeto passado",
+            response = ResponseEntity.class,
+            nickname="getObject")
+    public ResponseEntity<ResponseBody> getObject(@RequestBody List<ObjectReaderDto> listObjectReader) throws ParseException {
         return service.processGenericObject(listObjectReader);
     }
 

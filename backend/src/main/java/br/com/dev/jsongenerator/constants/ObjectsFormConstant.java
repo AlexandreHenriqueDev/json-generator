@@ -11,4 +11,6 @@ public class ObjectsFormConstant {
     public static final String COMMA = ",";
     public static final String MARKS = "\"";
 
+    private ObjectsFormConstant() {
+    }
 }

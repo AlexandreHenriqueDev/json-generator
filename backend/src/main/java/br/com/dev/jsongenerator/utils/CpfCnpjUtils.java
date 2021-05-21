@@ -1,22 +1,6 @@
 package br.com.dev.jsongenerator.utils;
 
-import br.com.dev.jsongenerator.enums.FormatterEnum;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class CpfCnpjUtils {
-
-    public static String getRandom(FormatterEnum formatter) {
-        switch (formatter) {
-            case CPF:
-                return cpf(false);
-            case CNPJ:
-                return cnpj(false);
-            default:
-                log.error("Tipo inválido!");
-                throw new EnumConstantNotPresentException(FormatterEnum.class, "Tipo inválido!");
-        }
-    }
 
     public static String cpf(boolean comPontos) {
         int n = 9;
