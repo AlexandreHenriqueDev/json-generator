@@ -2,12 +2,12 @@ package br.com.dev.jsongenerator.services.impl;
 
 import br.com.dev.jsongenerator.dto.ObjectReaderDto;
 import br.com.dev.jsongenerator.enums.TypeEnum;
+import br.com.dev.jsongenerator.exception.BusinessException;
 import br.com.dev.jsongenerator.services.JsonGeneratorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -24,13 +24,13 @@ public class JsonGeneratorServiceImpl implements JsonGeneratorService {
     private StringBuilder sb;
 
     @Override
-    public ResponseEntity processGenericObject(List<ObjectReaderDto> listObjectReader) throws ParseException {
+    public ResponseEntity processGenericObject(List<ObjectReaderDto> listObjectReader) throws BusinessException {
         sb = new StringBuilder();
 
         return ResponseEntity.ok().body(readProperties(listObjectReader, false));
     }
 
-    protected String readProperties(List<ObjectReaderDto> listObjectReader, Boolean isArray) throws ParseException {
+    protected String readProperties(List<ObjectReaderDto> listObjectReader, Boolean isArray) throws BusinessException {
         if(!isArray) {
             sb.append(OPEN_BRACES);
         }
@@ -85,7 +85,7 @@ public class JsonGeneratorServiceImpl implements JsonGeneratorService {
         return sb.toString();
     }
 
-    private void mountObjectArray(Object object, TypeEnum type, Integer size) throws ParseException {
+    private void mountObjectArray(Object object, TypeEnum type, Integer size) throws BusinessException {
         sb.append(OPEN_BRACKETS);
         for(var i = 0; i< size; i++) {
             readProperties(toListDto((Arrays.asList(object))), true);
