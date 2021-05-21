@@ -27,7 +27,7 @@ public class JsonGeneratorServiceImpl implements JsonGeneratorService {
         return ResponseEntity.ok().body(readProperties(listObjectReader, false));
     }
 
-    protected String readProperties(List<ObjectReaderDto> listObjectReader, Boolean isArray) {
+    protected String readProperties(List<ObjectReaderDto> listObjectReader, boolean isArray) {
         if(!isArray) {
             sb.append(OPEN_BRACES);
         }
