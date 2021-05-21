@@ -4,6 +4,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
+import static br.com.dev.jsongenerator.constants.DateConstants.*;
+import static br.com.dev.jsongenerator.utils.RandomUtils.generateRandomBoolean;
+
 public class DateUtils {
 
     private static Random random = new Random();
@@ -14,9 +17,9 @@ public class DateUtils {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int futureYear = random.nextInt(10) + year;
-        int futureMonth = random.nextInt(12 - month) + month;
-        int futureDay = random.nextInt(30 - day) + day;
+        int futureYear = random.nextInt(YEARS_FUTURE_INTERVAL) + year;
+        int futureMonth = random.nextInt(MONTHS_FUTURE_INTERVAL - month) + month;
+        int futureDay = random.nextInt(DAYS_FUTURE_INTERVAL - day) + day;
 
         calendar.set(futureYear, futureMonth, futureDay);
 
@@ -28,7 +31,7 @@ public class DateUtils {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int pastYear = year - random.nextInt(2);
+        int pastYear = year - random.nextInt(YEARS_PAST_INTERVAL);
         int pastMonth = random.nextInt(month);
         int pastDay = random.nextInt(day);
 
@@ -38,13 +41,11 @@ public class DateUtils {
     }
 
     public static Date randomDate() {
-        return new Date();
+        return generateRandomBoolean() ? futureDate() : pastDate();
     }
 
     private static Date currentDate() {
         return Date.from(Calendar.getInstance().toInstant());
     }
-
-
 
 }

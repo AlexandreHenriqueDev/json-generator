@@ -4,16 +4,19 @@ import br.com.dev.jsongenerator.dto.ObjectReaderDto;
 import br.com.dev.jsongenerator.enums.FormatterEnum;
 import br.com.dev.jsongenerator.enums.TypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 
-import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import static br.com.dev.jsongenerator.constants.ObjectsFormConstant.MARKS;
 import static br.com.dev.jsongenerator.constants.ObjectsFormConstant.TWO_DOTS;
 import static br.com.dev.jsongenerator.enums.FormatterEnum.RANDOM_DATE;
-import static br.com.dev.jsongenerator.utils.CpfCnpjUtils.*;
+import static br.com.dev.jsongenerator.utils.CpfCnpjUtils.cnpj;
+import static br.com.dev.jsongenerator.utils.CpfCnpjUtils.cpf;
 import static br.com.dev.jsongenerator.utils.DateUtils.*;
+import static br.com.dev.jsongenerator.utils.RandomUtils.*;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -133,25 +136,6 @@ public class ObjectFormUtils {
         return sb.append(MARKS).toString();
     }
 
-    private static Boolean generateRandomBoolean() {
-        return new Random().nextBoolean();
-    }
 
-    private static Long generateRandomLong() {
-        return new Random().nextLong();
-    }
-
-    private static Double generateRandomDouble() {
-        return new Random().nextDouble();
-    }
-
-    private static Integer generateRandomInteger(Integer max) {
-        return new Random().nextInt(max);
-    }
-
-    private static String generateRandomString(Integer length) {
-        String generatedString = RandomStringUtils.randomAlphabetic(length);
-        return generatedString;
-    }
 
 }
