@@ -6,6 +6,8 @@ public enum FormatterEnum {
     CNPJ("CNPJ"),
     FUTURE_DATE("FUTURE_DATE"),
     PAST_DATE("PAST_DATE"),
+    LOREM_TEXT("LOREM_TEXT"),
+    NAME_PT_BR("NAME_PT_BR"),
     RANDOM_DATE("RANDOM_DATE");
 
     private String description;

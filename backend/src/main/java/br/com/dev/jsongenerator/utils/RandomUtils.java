@@ -6,6 +6,9 @@ import java.util.Random;
 
 public class RandomUtils {
 
+    private RandomUtils() {
+    }
+
     public static Boolean generateRandomBoolean() {
         return new Random().nextBoolean();
     }
