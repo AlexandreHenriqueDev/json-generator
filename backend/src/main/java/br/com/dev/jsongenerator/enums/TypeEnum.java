@@ -9,6 +9,7 @@ public enum TypeEnum {
     BOOLEAN("BOOLEAN"),
     ARRAY("ARRAY"),
     OBJECT("OBJECT"),
+    CUSTOM_STRING("CUSTOM_STRING"),
     DATE("DATE");
 
     private String description;
